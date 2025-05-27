@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'https://github.com/abohmeed/currencyconverter.git'
+    repoURL: 'git@github.com:moeid404/currencyconverter-lab.git'
     targetRevision: HEAD
     path: argocd
   destination:
