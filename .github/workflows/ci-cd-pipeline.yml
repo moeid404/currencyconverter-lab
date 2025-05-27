@@ -112,6 +112,7 @@ jobs:
 
 
 
+
       - name: Sync Argo CD Application
         run: |
           argocd app sync $ARGOCD_APP_NAME
