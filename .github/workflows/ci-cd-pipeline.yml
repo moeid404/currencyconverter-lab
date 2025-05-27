@@ -117,7 +117,7 @@ jobs:
 
       - name: Login to Argo CD
         run: |
-          argocd login ${ARGOCD_SERVER} \
+          argocd login https://${ARGOCD_SERVER} \
             --username admin \
             --password ${ARGOCD_AUTH_TOKEN} \
             --insecure \
