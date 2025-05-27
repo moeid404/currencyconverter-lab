@@ -106,6 +106,14 @@ jobs:
         env:
           ARGOCD_SERVER: ${{ secrets.ARGOCD_SERVER }}
 
+      - name: Debug ARGOCD_SERVER value
+        run: |
+          set -x
+          echo "ARGOCD_SERVER=>>${ARGOCD_SERVER}<<"
+          ping -c 1 $ARGOCD_SERVER || true
+        env:
+          ARGOCD_SERVER: ${{ secrets.ARGOCD_SERVER }}
+
 
       - name: Login to Argo CD
         run: |
