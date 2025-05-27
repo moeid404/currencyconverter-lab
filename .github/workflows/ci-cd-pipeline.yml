@@ -58,13 +58,10 @@ jobs:
           DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD=${{ secrets.DOCKER_PASSWORD }}
 
-          # Log in to Docker Hub
           echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
-          # Build Docker image
           docker build -t $DOCKER_IMAGE .
 
-          # Tag and Push Docker image for each determined tag
           IFS=',' read -ra TAGS <<< "$DOCKER_IMAGE_TAGS"
           for TAG in "${TAGS[@]}"; do
             docker tag $DOCKER_IMAGE $DOCKER_IMAGE:$TAG
@@ -83,16 +80,18 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
 
+      - name: Pull with Authenticated Token
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git pull --rebase https://x-access-token:${GITHUB_TOKEN}@github.com/moeid404/currencyconverter-lab.git master
+
       - name: Update Deployment Image
         run: |
-          git pull --rebase origin master
           IMAGE_TAG=${{ needs.build-and-push.outputs.sha }}
           sed -i 's|image: '${{ env.DOCKER_IMAGE }}':.*|image: '${{ env.DOCKER_IMAGE }}':'"$IMAGE_TAG"'|' k8s/base/deployment.yaml
           git add k8s/base/deployment.yaml
-
-          # Try to commit only if there are changes
           git diff --cached --quiet || git commit -m "Update image version to $IMAGE_TAG"
-
           git push
 
       - name: Install Argo CD CLI
