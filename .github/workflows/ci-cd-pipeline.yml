@@ -13,7 +13,7 @@ env:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted  # ✅ مخصص للرَنَّر المحلي
     env:
       APIHOST: ${{ secrets.APIHOST }}
       APIKEY: ${{ secrets.APIKEY }}
@@ -29,9 +29,9 @@ jobs:
 
   build-and-push:
     needs: test
-    runs-on: ubuntu-latest
+    runs-on: self-hosted  # ✅ مخصص للرَنَّر المحلي
     outputs:
-      sha: ${{ steps.short-sha.outputs.sha }} 
+      sha: ${{ steps.short-sha.outputs.sha }}
     steps:
       - uses: actions/checkout@v4
 
@@ -71,7 +71,7 @@ jobs:
 
   update-deployment:
     needs: build-and-push
-    runs-on: ubuntu-latest
+    runs-on: self-hosted  # ✅ مخصص للرَنَّر المحلي
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -100,40 +100,15 @@ jobs:
           curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
           chmod +x /usr/local/bin/argocd
 
-      - name: Debug ARGOCD_SERVER value
-        run: |
-          echo "ARGOCD_SERVER=>>${ARGOCD_SERVER}<<"
-        env:
-          ARGOCD_SERVER: ${{ secrets.ARGOCD_SERVER }}
-
-      - name: Debug ARGOCD_SERVER value
-        run: |
-          set -x
-          echo "ARGOCD_SERVER=>>${ARGOCD_SERVER}<<"
-          ping -c 1 $ARGOCD_SERVER || true
-        env:
-          ARGOCD_SERVER: ${{ secrets.ARGOCD_SERVER }}
-
-
       - name: Login to Argo CD
         run: |
-          argocd login https://${ARGOCD_SERVER} \
+          argocd login argocd.local \
             --username admin \
             --password ${ARGOCD_AUTH_TOKEN} \
-            --insecure \
-            --grpc-web
-
-
-
+            --insecure
         env:
-          ARGOCD_SERVER: ${{ secrets.ARGOCD_SERVER }}
           ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_AUTH_TOKEN }}
-
-
-
 
       - name: Sync Argo CD Application
         run: |
-          argocd app sync $ARGOCD_APP_NAME
-        env:
-          ARGOCD_APP_NAME: currencyconverter-production
+          argocd app sync currencyconverter-production
