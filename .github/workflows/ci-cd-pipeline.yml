@@ -109,10 +109,14 @@ jobs:
           argocd login argocd.local \
             --username admin \
             --password ${ARGOCD_AUTH_TOKEN} \
+            --grpc-web \
             --insecure
         env:
           ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_AUTH_TOKEN }}
 
+      - name: Debug Argo CD User Info
+        run: argocd account get-user-info --grpc-web
+
       - name: Sync Argo CD Application
         run: |
-          argocd app sync currencyconverter-production
+          argocd app sync currencyconverter-production --grpc-web
