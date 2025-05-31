@@ -96,15 +96,15 @@ jobs:
           git diff --cached --quiet || git commit -m "Update image version to $IMAGE_TAG"
           git push
 
-      - name: Install Argo CD CLI (if needed)
-        run: |
-          if ! command -v argocd &> /dev/null; then
-            echo "Installing Argo CD CLI v2.10.5..."
-            curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/download/v2.10.5/argocd-linux-amd64
-            chmod +x /usr/local/bin/argocd
-          else
-            echo "Argo CD CLI already installed. Skipping download."
-          fi
+      # - name: Install Argo CD CLI (if needed)
+      #   run: |
+      #     if ! command -v argocd &> /dev/null; then
+      #       echo "Installing Argo CD CLI v2.10.5..."
+      #       curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/download/v2.10.5/argocd-linux-amd64
+      #       chmod +x /usr/local/bin/argocd
+      #     else
+      #       echo "Argo CD CLI already installed. Skipping download."
+      #     fi
 
 
       - name: Login to Argo CD
