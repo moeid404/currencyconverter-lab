@@ -18,8 +18,6 @@ jobs:
       APIHOST: ${{ secrets.APIHOST }}
       APIKEY: ${{ secrets.APIKEY }}
     steps:
-      - uses: actions/checkout@v4
-
       - name: Check Python version
         run: python3.11 --version
 
@@ -77,8 +75,7 @@ jobs:
     needs: build-and-push
     runs-on: self-hosted
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Configure Git
         run: |
@@ -99,7 +96,7 @@ jobs:
           git diff --cached --quiet || git commit -m "Update image version to $IMAGE_TAG"
           git push
 
-      - name: Install Argo CD CLI
+      - name: Install Argo CD CLI (if needed)
         run: |
           if ! command -v argocd &> /dev/null; then
             echo "Installing Argo CD CLI..."
@@ -108,7 +105,6 @@ jobs:
           else
             echo "Argo CD CLI already installed. Skipping download."
           fi
-
 
       - name: Login to Argo CD
         run: |
